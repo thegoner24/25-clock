@@ -1,70 +1,144 @@
-# Getting Started with Create React App
+# 25 + 5 Clock (Pomodoro Timer)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![25 + 5 Clock Screenshot](https://i.imgur.com/mXwJXxD.png)
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This project is a Pomodoro Timer application built with React. The Pomodoro Technique is a time management method that uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This application allows users to set custom session and break lengths, and automatically cycles between them.
 
-### `npm start`
+## Demo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+You can view a live demo of this project at: [https://25--5-clock.freecodecamp.rocks](https://25--5-clock.freecodecamp.rocks)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- Customizable session and break lengths (1-60 minutes)
+- Visual countdown timer with mm:ss format
+- Audio notification when timer reaches zero
+- Play/pause functionality to control the timer
+- Reset button to restore default settings
+- Automatic switching between session and break periods
+- Responsive design for various screen sizes
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## User Stories
 
-### `npm run build`
+This project fulfills the following user stories:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Timer display with session/break indicator
+2. Adjustable session and break lengths (1-60 minutes)
+3. Start, pause, and reset functionality
+4. Audio notification when timer completes
+5. Automatic switching between session and break periods
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Technologies Used
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **React**: Frontend library for building the user interface
+- **React Hooks**: useState, useEffect, and useRef for state management and side effects
+- **CSS**: Custom styling with responsive design
+- **Font Awesome**: Icon library for UI elements
+- **HTML5 Audio**: For the timer completion sound
 
-### `npm run eject`
+## Installation and Setup
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/25-clock.git
+   cd 25-clock
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Start the development server:
+   ```
+   npm start
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-## Learn More
+## Usage
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Adjust Session/Break Length**: Use the up and down arrows to set your preferred session and break durations
+- **Start Timer**: Click the play button to start the countdown
+- **Pause Timer**: Click the pause button to temporarily stop the countdown
+- **Reset Timer**: Click the reset button to restore default settings (25 min session, 5 min break)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Code Structure
 
-### Code Splitting
+- **App.js**: Main component containing all the timer logic and UI components
+- **App.css**: Styling for the entire application
+- **index.js**: Entry point for the React application
+- **index.html**: HTML template with Font Awesome and Google Fonts integration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Key Implementation Details
 
-### Analyzing the Bundle Size
+### Timer Logic
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The timer uses `setInterval` within a `useEffect` hook to create a countdown that updates every second. When the timer reaches zero, it automatically switches between session and break periods.
 
-### Making a Progressive Web App
+```javascript
+useEffect(() => {
+  if (isRunning) {
+    intervalRef.current = setInterval(() => {
+      setTimeLeft(prevTimeLeft => {
+        if (prevTimeLeft === 0) {
+          // Play beep sound and switch modes
+          beepSoundRef.current.play();
+          
+          if (timerType === 'Session') {
+            setTimerType('Break');
+            setTimerLabel('Break');
+            return breakLength * 60;
+          } else {
+            setTimerType('Session');
+            setTimerLabel('Session');
+            return sessionLength * 60;
+          }
+        }
+        return prevTimeLeft - 1;
+      });
+    }, 1000);
+  }
+  // Cleanup logic...
+}, [isRunning, timerType, breakLength, sessionLength]);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Audio Implementation
 
-### Advanced Configuration
+The application uses an HTML5 audio element with a reference to play a sound when the timer completes:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```javascript
+<audio 
+  id="beep" 
+  ref={beepSoundRef}
+  src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+/>
+```
 
-### Deployment
+## Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This project includes the FreeCodeCamp test suite to verify that all user stories are correctly implemented. The test script is loaded in index.html and can be activated by clicking the hamburger menu in the top-left corner of the page.
 
-### `npm run build` fails to minify
+## Future Enhancements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Add task tracking functionality
+- Implement a history of completed sessions
+- Add customizable themes
+- Create mobile app versions
+- Add user accounts to save preferences
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- [FreeCodeCamp](https://www.freecodecamp.org/) for the project requirements and test suite
+- [Font Awesome](https://fontawesome.com/) for the icons
+- [Create React App](https://github.com/facebook/create-react-app) for the project setup
